@@ -15,5 +15,5 @@ if prompt:
     st.session_state.history.append(("assistant", reply))
 
 for role, msg in st.session_state.history:
-    wit st.chat_message(role):
+    with st.chat_message(role):
         st.markdown(msg)
