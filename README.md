@@ -1,9 +1,9 @@
 ---
-title: Food ChatBot Demo
+title: Food ChatBot
 emoji: 🍕
 colorFrom: yellow
 colorTo: red
-sdk: docker
+sdk: streamlit
 app_file: food-chatbot.py
 pinned: false
 ---
