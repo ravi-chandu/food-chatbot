@@ -1,0 +1,28 @@
+name: Deploy Streamlit App to Hugging Face
+
+on:
+  # This action triggers on every push to the 'main' branch
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-to-hf-space:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checks out your repository's code
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # This is required to push to a different repo
+          fetch-depth: 0 
+
+      # 2. Pushes all files from this repo to your HF Space
+      - name: Push to HF Space
+        env:
+          # This is the HF_TOKEN you added to your GitHub Secrets
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Push to your HF Space
+          # This command uses your username 'ravi392' and space name 'food-chatbot'
+          git push "https://ravi392:$HF_TOKEN@huggingface.co/spaces/ravi392/food-chatbot" main --force
+
