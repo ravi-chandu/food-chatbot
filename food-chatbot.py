@@ -5,7 +5,7 @@ st.set_page_config(page_title="Food Chatbot ❤️", layout="wide")
 if "history" not in st.session_state:
     st.session_state.history = []
 
-st.title("🍜 Food Chatbot ❤️")
+st.title("🍜 Food Chatbot ❤️)
 
 prompt = st.chat_input("Ask about menu, order status, delivery time…")
 if prompt:
