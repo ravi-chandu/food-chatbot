@@ -18,5 +18,5 @@ EXPOSE 8501
 
 # The command to run your Streamlit app
 # We are running "app.py"
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "food-chatbot.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
