@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="Food Chatbot", layout="wide")
+st.set_page_config(page_title="Food Chatbot ❤️", layout="wide")
 
 if "history" not in st.session_state:
     st.session_state.history = []
