@@ -1,122 +1,162 @@
 import streamlit as st
-import time, random, os
+import time, random, datetime
 
 # --------------------------------------------
-# Page Config
+# CONFIG
 # --------------------------------------------
-st.set_page_config(
-    page_title="Food Delivery Chatbot ❤️",
-    layout="wide",
-    page_icon="🍕",
-)
+st.set_page_config(page_title="PizzaNow 🍕 Chat Assistant", layout="wide", page_icon="🍕")
+st.markdown("""
+    <style>
+        /* Global clean look */
+        body { background-color: #fafafa; }
+        .main { padding: 0rem 2rem; }
+        .chat-bubble-user {
+            background-color: #DCF8C6;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin: 5px 0;
+            display: inline-block;
+            max-width: 80%;
+        }
+        .chat-bubble-bot {
+            background-color: #f1f0f0;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin: 5px 0;
+            display: inline-block;
+            max-width: 80%;
+        }
+        .order-box {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        hr { margin: 0.5rem 0rem; }
+    </style>
+""", unsafe_allow_html=True)
 
 # --------------------------------------------
-# Sidebar: Restaurant Info & Quick Stats
+# SIMULATED LOGIN (mock user session)
 # --------------------------------------------
-with st.sidebar:
-    st.image(
-        "https://cdn-icons-png.flaticon.com/512/3595/3595455.png",
-        width=120,
-    )
-    st.title("🍴 PizzaNow")
-    st.markdown("**City:** Hyderabad\n**Branches:** 5\n**Active Riders:** 23")
-    st.divider()
-    st.subheader("⚡ Quick Actions")
-    if st.button("Track My Order"):
-        st.session_state.history.append(
-            ("user", "Track my latest order status.")
-        )
-    if st.button("Show Menu"):
-        st.session_state.history.append(
-            ("user", "What’s on the menu today?")
-        )
-    if st.button("Offers 💸"):
-        st.session_state.history.append(("user", "Any special offers today?"))
-
-# --------------------------------------------
-# Chat State
-# --------------------------------------------
+if "user" not in st.session_state:
+    st.session_state.user = None
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# --------------------------------------------
-# Helper: Simulated LLM/Agent Response
-# --------------------------------------------
-def chat_response(user_input: str):
-    """Placeholder for LLM/SQL agent logic"""
-    user_input = user_input.lower()
-    if "menu" in user_input:
-        return "🍕 Today's Menu:\n- Margherita\n- Veggie Supreme\n- BBQ Chicken\n- Cheese Burst Garlic Bread\n- Chocolate Lava Cake 🍫"
-    elif "offer" in user_input:
-        return "🎉 Ongoing Offers:\nBuy 1 Get 1 Free on Medium Pizzas (till 9 PM)"
-    elif "track" in user_input or "order" in user_input:
-        eta = random.randint(5, 20)
-        status = random.choice(["Preparing 🍳", "Out for Delivery 🛵", "Almost There 🚦"])
-        return f"Your order is currently **{status}**.\nEstimated arrival: {eta} minutes."
-    elif "thanks" in user_input or "thank you" in user_input:
-        return "You're most welcome! 😊 Enjoy your meal!"
-    else:
-        return "🤖 I'm still learning! You can ask about *menu*, *order status*, or *offers*."
-
-# --------------------------------------------
-# Header Section
-# --------------------------------------------
-st.markdown(
-    "<h2 style='text-align:center;'>🍜 Food Delivery Chatbot ❤️</h2>",
-    unsafe_allow_html=True,
-)
-
-# --------------------------------------------
-# Two-Column Layout: Chat (70%) | Order Summary (30%)
-# --------------------------------------------
-col_chat, col_summary = st.columns([0.7, 0.3])
-
-with col_chat:
-    prompt = st.chat_input("Ask about menu, order, delivery, offers…")
-
-    if prompt:
-        st.session_state.history.append(("user", prompt))
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        with st.chat_message("assistant"):
-            placeholder = st.empty()
-            placeholder.markdown("⏳ Thinking...")
-            time.sleep(0.8)
-            reply = chat_response(prompt)
-            placeholder.markdown(reply)
-
-        st.session_state.history.append(("assistant", reply))
-
-    # Show chat history
-    for role, msg in st.session_state.history:
-        if role == "user":
-            with st.chat_message("user"):
-                st.markdown(msg)
+def login_ui():
+    st.image("https://cdn-icons-png.flaticon.com/512/3595/3595455.png", width=100)
+    st.title("🍕 Welcome to PizzaNow")
+    username = st.text_input("Enter your registered email")
+    if st.button("Login"):
+        if username.strip():
+            st.session_state.user = username.strip()
+            st.success(f"Welcome back, {username.split('@')[0].title()}!")
+            st.rerun()
         else:
-            with st.chat_message("assistant"):
-                st.markdown(msg)
+            st.warning("Please enter your email to continue.")
 
-with col_summary:
-    st.subheader("🧾 Order Summary (Live)")
-    dummy_orders = [
-        {"id": "#1245", "item": "Margherita Pizza", "status": "Preparing 🍳"},
-        {"id": "#1239", "item": "Cheese Garlic Bread", "status": "Delivered ✅"},
-        {"id": "#1234", "item": "Veg Supreme Pizza", "status": "Out for Delivery 🛵"},
+def logout_ui():
+    st.session_state.user = None
+    st.session_state.history = []
+    st.rerun()
+
+# --------------------------------------------
+# APP NAVBAR
+# --------------------------------------------
+def navbar():
+    with st.container():
+        col1, col2, col3 = st.columns([0.05, 0.8, 0.15])
+        with col1:
+            st.image("https://cdn-icons-png.flaticon.com/512/3595/3595455.png", width=40)
+        with col2:
+            st.markdown("<h4 style='margin-top:8px;'>PizzaNow Chat Assistant</h4>", unsafe_allow_html=True)
+        with col3:
+            if st.button("Logout", use_container_width=True):
+                logout_ui()
+    st.markdown("---")
+
+# --------------------------------------------
+# SIMULATED DATA for current user
+# --------------------------------------------
+def get_user_orders(email):
+    return [
+        {"id": "#1045", "item": "Margherita Pizza", "status": "Out for Delivery 🛵", "eta": "12 mins"},
+        {"id": "#1038", "item": "Garlic Breadsticks", "status": "Delivered ✅", "eta": None},
     ]
-    for o in dummy_orders:
-        with st.container(border=True):
-            st.markdown(f"**Order {o['id']}** — {o['item']}")
-            st.markdown(f"Status: {o['status']}")
-            st.progress(random.randint(40, 100))
 
-    st.divider()
-    st.caption("🔔 Real-time tracking simulation enabled")
+def bot_reply(user_input):
+    msg = user_input.lower()
+    if "menu" in msg:
+        return "📋 Today's Menu:\n- Margherita\n- Peri Peri Chicken\n- Veggie Delight\n- Cheese Burst Garlic Bread\n- Brownie Sundae 🍨"
+    elif "offer" in msg or "discount" in msg:
+        return "💸 Current Offer: Buy 1 Get 1 on all Medium Pizzas till 10 PM!"
+    elif "track" in msg or "order" in msg:
+        orders = get_user_orders(st.session_state.user)
+        lines = [f"{o['id']} → {o['item']} ({o['status']}) ETA: {o['eta'] or 'Delivered'}" for o in orders]
+        return "📦 Your orders:\n" + "\n".join(lines)
+    elif "hello" in msg or "hi" in msg:
+        return f"Hello {st.session_state.user.split('@')[0].title()} 👋! How can I help you today?"
+    elif "thank" in msg:
+        return "Always happy to help! 😊"
+    else:
+        return "🤖 I can assist with your *menu*, *offers*, or *order tracking*. What would you like to check?"
 
 # --------------------------------------------
-# Footer
+# MAIN APP VIEW (after login)
 # --------------------------------------------
-st.markdown(
-    "<br><center><small>Built with ❤️ using Streamlit | Powered by Microsoft Fabric RTI</small></center>",
-    unsafe_allow_html=True,
-)
+def chat_ui():
+    navbar()
+
+    user_email = st.session_state.user
+    user_orders = get_user_orders(user_email)
+
+    col_chat, col_orders = st.columns([0.7, 0.3], gap="large")
+
+    with col_chat:
+        st.subheader("💬 Chat with PizzaNow Assistant")
+        prompt = st.chat_input("Ask about your order, offers, or menu…")
+        if prompt:
+            st.session_state.history.append(("user", prompt))
+            with st.chat_message("user"):
+                st.markdown(f"<div class='chat-bubble-user'>{prompt}</div>", unsafe_allow_html=True)
+            with st.chat_message("assistant"):
+                placeholder = st.empty()
+                placeholder.markdown("<div class='chat-bubble-bot'>Typing...</div>", unsafe_allow_html=True)
+                time.sleep(0.7)
+                reply = bot_reply(prompt)
+                placeholder.markdown(f"<div class='chat-bubble-bot'>{reply}</div>", unsafe_allow_html=True)
+            st.session_state.history.append(("assistant", reply))
+
+        # Render previous messages
+        for role, msg in st.session_state.history:
+            if role == "user":
+                with st.chat_message("user"):
+                    st.markdown(f"<div class='chat-bubble-user'>{msg}</div>", unsafe_allow_html=True)
+            else:
+                with st.chat_message("assistant"):
+                    st.markdown(f"<div class='chat-bubble-bot'>{msg}</div>", unsafe_allow_html=True)
+
+    with col_orders:
+        st.subheader("📦 Your Orders")
+        for o in user_orders:
+            with st.container():
+                st.markdown(f"""
+                    <div class='order-box'>
+                        <b>Order {o['id']}</b><br>
+                        {o['item']}<br>
+                        <small>Status: {o['status']}<br>ETA: {o['eta'] or 'Delivered'}</small>
+                    </div>
+                """, unsafe_allow_html=True)
+        st.caption("🔄 Auto-refresh every few minutes (simulated)")
+
+    st.markdown("<br><center><small>Built with ❤️ using Streamlit</small></center>", unsafe_allow_html=True)
+
+# --------------------------------------------
+# RENDER
+# --------------------------------------------
+if st.session_state.user:
+    chat_ui()
+else:
+    login_ui()
