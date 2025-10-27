@@ -1,10 +1,10 @@
 ---
-title: Sample Streamlit App
-emoji: 🚀
-colorFrom: blue
-colorTo: green
+title: Food ChatBot Demo
+emoji: 🍕
+colorFrom: yellow
+colorTo: red
 sdk: docker
-app_file: sample_streamlit_app.py
+app_file: food-chatbot.py
 pinned: false
 ---
 
