@@ -17,6 +17,7 @@ COPY . .
 EXPOSE 8501
 
 # The command to run your Streamlit app
-# We are running "app.py"
-CMD ["streamlit", "run", "food-chatbot.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# We've added "--server.headless=true" to fix the "Stopping..." error
+# UPDATED to run your "food-chatbot.py" file
+CMD ["streamlit", "run", "food-chatbot.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
 
