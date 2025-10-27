@@ -1,6 +1,6 @@
 ---
 title: Food ChatBot
-emoji: 🍕
+emoji: 🍜
 colorFrom: yellow
 colorTo: red
 sdk: streamlit
